@@ -1,0 +1,41 @@
+Arquitetua inicial
+mMyFinance/
+│
+├── index.html          # Sua página principal
+├── css/
+│   ├── globais.css     # Resets e variáveis de cor/fonte
+│   └── layout.css      # Estilos específicos
+│
+└── js/
+    ├── app.js          # Arquivo principal que inicializa a aplicação
+    │
+    ├── api/            # Tudo que conversa com o "mundo externo"
+    │   └── transacoes.js # Funções que no futuro farão fetch() para seu backend
+    │
+    ├── componentes/    # Lógica de interface (DOM)
+    │   ├── tabela.js   # Função para renderizar as linhas da tabela
+    │   └── form.js     # Função para capturar dados do formulário de nova despesa
+    │
+    └── utils/          # Funções auxiliares
+        └── formatador.js # Formatar moeda (R$), datas, etc.
+
+
+ARQUITETURA ESCALAVEL:
+myfinance-ecosystem/
+│
+├── docker-compose.yml         # Para subir o banco de dados e a API localmente
+│
+├── frontend/                  # Onde vai morar seu React (ou seu Vanilla JS por enquanto)
+│   ├── package.json
+│   ├── public/
+│   └── src/
+│       ├── components/        # Botões, inputs, tabelas
+│       ├── pages/             # Dashboard, Login
+│       └── services/          # Conexão com o backend (api.js)
+│
+└── backend/                   # Sua API (onde entrará o FastAPI ou Django)
+    ├── requirements.txt
+    ├── main.py                # Ponto de entrada da API
+    ├── routers/               # Rotas (ex: /despesas, /receitas)
+    ├── models/                # Modelos de banco de dados (SQLAlchemy ou Django ORM)
+    └── database.py            # Configuração de conexão com PostgreSQL/SQLite

@@ -1,0 +1,91 @@
+/* =========================================
+   RESPONSIVIDADE (Tablets e Celulares)
+   ========================================= */
+
+/* Para telas médias (Tablets - até 768px) */
+@media (max-width: 768px) {
+    .header ul {
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    main {
+        padding: 0 0.5rem;
+    }
+
+    /* Empilha os cards de resumo */
+    .resume {
+        flex-direction: column;
+    }
+
+    .card {
+        min-width: 100%;
+        padding: 1rem;
+        align-items: center; /* Centraliza o texto nos cards */
+    }
+
+    /* Empilha os campos do formulário */
+    .newItem {
+        flex-direction: column;
+        align-items: stretch; /* Faz os inputs ocuparem 100% da largura */
+        gap: 10px;
+    }
+
+    .input-group {
+        min-width: 100%;
+    }
+
+    /* O botão de incluir ocupa a largura total para facilitar o toque no celular */
+    #btnNew {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+        height: 50px; /* Mais alto para facilitar o clique */
+    }
+
+    /* Reduz um pouco o espaçamento da tabela para caber na tela */
+    th, td {
+        padding: 10px 5px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Para telas muito pequenas (Celulares menores - até 480px) */
+@media (max-width: 480px) {
+    .header {
+        padding: 0.5rem;
+    }
+    
+    .header ul {
+        /* Transforma a lista em um grid de 2 colunas */
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.5rem;
+        width: 100%;
+        margin: 0;
+    }
+
+    .header a {
+        /* Cria "botões" com fundo cinza claro para facilitar o toque no celular */
+        justify-content: center;
+        background-color: var(--bg-color);
+        padding: 0.6rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+    }
+
+    .card h2 {
+        font-size: 1.5rem;
+    }
+
+    section h1 {
+        font-size: 1.5rem;
+        margin: 1.5rem 0;
+    }
+
+    /* Esconde a palavra da descrição do tipo na tabela para economizar espaço */
+    td small {
+        display: none; 
+    }
+}
