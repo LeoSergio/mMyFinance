@@ -733,3 +733,220 @@ tbody td {
 }
 
 #btnPrint:hover { opacity: 0.85; }
+
+/* ==========================================
+   DASHBOARD — EXPAND POR CATEGORIA
+   ========================================== */
+
+.dash-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.dash-card {
+  background: var(--bg-page);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.dash-card:hover { border-color: var(--color-accent); }
+
+.dash-card-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1.1rem;
+  cursor: pointer;
+  user-select: none;
+  gap: 0.5rem;
+}
+
+.dash-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.dash-card-header i { font-size: 1.2rem; }
+
+.dash-card-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.dash-card-right .dash-amount {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-expense);
+}
+
+.dash-chevron {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.dash-card--open .dash-chevron { transform: rotate(180deg); }
+
+.dash-bar-wrap {
+  height: 4px;
+  background: var(--border-color);
+  margin: 0 1.1rem 0.5rem;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.dash-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent), var(--color-total));
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.dash-pct {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  padding: 0 1.1rem 0.6rem;
+}
+
+/* Lista de itens (oculta por padrão) */
+.dash-items-list {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.2s;
+  border-top: 0px solid var(--border-color);
+}
+
+.dash-card--open .dash-items-list {
+  max-height: 600px;
+  border-top-width: 1px;
+  padding: 0.5rem 0 0.25rem;
+}
+
+.dash-item-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.82rem;
+  transition: background 0.15s;
+}
+
+.dash-item-row:hover { background: var(--bg-card); }
+
+.dash-item-desc {
+  flex: 1;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-item-meta {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.dash-item-amount {
+  color: var(--color-expense);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dash-items-empty {
+  padding: 0.5rem 1.1rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+/* ==========================================
+   COMPARAÇÃO ENTRE MESES
+   ========================================== */
+
+.cmp-section {
+  margin-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.25rem;
+}
+
+.cmp-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.cmp-table-wrap {
+  overflow-x: auto;
+}
+
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.83rem;
+}
+
+.cmp-table thead tr {
+  border-bottom: 2px solid var(--border-color);
+}
+
+.cmp-table th {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.cmp-table td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.cmp-table tbody tr:last-child td { border-bottom: none; }
+
+.cmp-table tbody tr:hover td { background: var(--bg-page); }
+
+.cmp-cat {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cmp-cat i { color: var(--color-accent); }
+
+.cmp-value {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  margin-top: 0.1rem;
+}
+
+.trend--up   { color: var(--color-expense); }
+.trend--down { color: var(--color-income); }
+.trend--eq   { color: var(--text-muted); }
