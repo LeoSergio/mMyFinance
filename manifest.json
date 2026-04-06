@@ -1,6 +1,6 @@
 {
   "name": "Controle Financeiro",
-  "short_name": "Financeiro",
+  "short_name": "MyFinance",
   "description": "Controle suas receitas e despesas pessoais",
   "start_url": "./index.html",
   "display": "standalone",
