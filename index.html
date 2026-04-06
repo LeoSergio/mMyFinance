@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Controle Financeiro</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Financeiro">
+    <link rel="apple-touch-icon" href="src/assets/icon-192.png">
     <link rel="stylesheet" href="src/styles/main.css">
     <link rel="stylesheet" href="src/styles/media.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
@@ -24,8 +30,6 @@
 <!-- ===== HEADER ===== -->
 <div class="header">
     <header>
-
-        <!-- ESQUERDA: hambúrguer + saudação -->
         <div class="header-left">
             <button id="menu-toggle" class="hamburger-btn" title="Menu" aria-label="Abrir menu">
                 <span></span><span></span><span></span>
@@ -35,18 +39,14 @@
                 <span id="welcome-text"></span>
             </div>
         </div>
-
-        <!-- DIREITA: título + tema -->
         <div class="header-right">
             <span class="header-title"><i class='bx bx-line-chart'></i> Controle Financeiro</span>
             <button id="theme-toggle" class="theme-btn" title="Alternar tema">
                 <i id="theme-icon" class="bx bx-moon"></i>
             </button>
         </div>
-
     </header>
 
-    <!-- MENU LATERAL (drawer) -->
     <nav id="nav-drawer" class="nav-drawer">
         <div class="nav-drawer-header">
             <span>Menu</span>
@@ -62,13 +62,12 @@
     <div id="nav-overlay" class="nav-overlay"></div>
 </div>
 
-<!-- ===== SEÇÃO HERO ===== -->
 <section>
     <h1>Sistema Financeiro</h1>
 </section>
 
 <main>
-    <!-- ===== CARDS DE RESUMO ===== -->
+    <!-- CARDS DE RESUMO -->
     <div class="resume">
         <div class="card card-income">
             <span><i class='bx bx-trending-up'></i> Entradas</span>
@@ -84,7 +83,7 @@
         </div>
     </div>
 
-    <!-- ===== FORMULÁRIO ===== -->
+    <!-- FORMULÁRIO -->
     <div class="newItem">
         <div class="input-group">
             <label for="desc"><i class='bx bx-edit-alt'></i> Descrição</label>
@@ -109,13 +108,13 @@
         <button id="btnNew"><i class='bx bx-plus-circle'></i> Incluir</button>
     </div>
 
-    <!-- ===== DATA SELECIONADA ===== -->
+    <!-- DATA SELECIONADA -->
     <div id="selected-date-wrap" class="selected-date-wrap" style="display:none;">
         <i class='bx bx-calendar-check'></i>
         <span id="selected-date-display"></span>
     </div>
 
-    <!-- ===== TABELA ===== -->
+    <!-- TABELA -->
     <div class="divTable">
         <table>
             <thead>
@@ -131,11 +130,28 @@
         </table>
     </div>
 
-    <!-- ===== DASHBOARD ===== -->
+    <!-- GRÁFICO DE EVOLUÇÃO -->
+    <div class="chart-section">
+        <h3 class="dash-title"><i class="bx bx-line-chart"></i> Evolução do Saldo</h3>
+        <div id="balance-chart"></div>
+    </div>
+
+    <!-- DASHBOARD -->
     <div id="dashboard" class="dashboard-section"></div>
 </main>
 
-<button id="btnPrint" onclick="btnPrint()"><i class='bx bx-printer'></i> Imprimir</button>
+<!-- BOTÕES FLUTUANTES -->
+<div class="fab-group">
+    <button id="btnInstall" title="Instalar app" style="display:none;">
+        <i class='bx bx-download'></i> Instalar App
+    </button>
+    <button id="btnPrint" onclick="btnPrint()" title="Imprimir">
+        <i class='bx bx-printer'></i> Imprimir
+    </button>
+    <button id="btnExportCSV" onclick="btnExport()" title="Exportar para Google Sheets">
+        <i class='bx bx-export'></i> Exportar CSV
+    </button>
+</div>
 
 <footer></footer>
 
