@@ -1,0 +1,25 @@
+# ==========================================
+# REQUIREMENTS.TXT
+# Dependências para o ambiente de desenvolvimento
+# Instalar com: pip install -r requirements.txt
+# ==========================================
+
+# Servidor HTTP local com live reload
+# Usado para servir o projeto localmente (alternativa ao Live Server do VS Code)
+livereload==2.6.3
+
+# Geração dos ícones PWA (icon-192.png e icon-512.png em src/assets/)
+# Usado em: scripts/generate_icons.py
+Pillow==10.3.0
+
+# Minificação de CSS para build de produção (opcional)
+# Uso: python -m csscompressor src/styles/main.css
+csscompressor==0.9.5
+
+# Minificação de JS para build de produção (opcional)
+# Uso: python -m jsmin src/js/main.js
+jsmin==3.0.1
+
+# Linting de arquivos HTML (verificação de erros)
+# Uso: python -m html5-parser index.html
+html5-parser==0.4.10
