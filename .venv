@@ -1,0 +1,48 @@
+# ==========================================
+# .venv — Configurações do ambiente virtual
+# ==========================================
+# Este arquivo documenta o ambiente de desenvolvimento.
+# Para criar e ativar o ambiente virtual:
+#
+#   python -m venv .venv
+#
+#   Windows:  .venv\Scripts\activate
+#   Mac/Linux: source .venv/bin/activate
+#
+# Depois instale as dependências:
+#   pip install -r requirements.txt
+# ==========================================
+
+[environment]
+python_version = 3.11
+virtual_env    = .venv
+
+[paths]
+# Raiz do projeto
+project_root = .
+
+# Servidor local para desenvolvimento
+dev_server_host = localhost
+dev_server_port = 3000
+
+# Pasta de assets gerados (ícones PWA)
+assets_output = src/assets/
+
+[scripts]
+# Iniciar servidor de desenvolvimento com live reload
+# Uso: python scripts/serve.py
+serve = python scripts/serve.py
+
+# Regenerar ícones PWA
+# Uso: python scripts/generate_icons.py
+icons = python scripts/generate_icons.py
+
+[notes]
+# O projeto é frontend puro (HTML, CSS, JS vanilla).
+# Python é usado APENAS para ferramentas de desenvolvimento:
+#   - servir o projeto localmente
+#   - gerar os ícones PNG do PWA
+#   - minificar assets para produção
+#
+# Nenhum arquivo .py vai para produção.
+# O deploy final é feito com os arquivos estáticos do projeto.
