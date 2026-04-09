@@ -3,10 +3,10 @@
 // ==========================================
 
 const CATEGORIES = [
-  { key: "alimentacao", label: "Alimentação", icon: "bx bx-food-menu", keywords: ["comida","alimenta","mercado","supermercado","restaurante","lanche","almoço","jantar","café","padaria","pizza","hamburguer","ifood","delivery"] },
+  { key: "alimentacao", label: "Alimentação", icon: "bx bx-food-menu", keywords: ["comida","alimenta","mercado","supermercado","restaurante","lanche","almoço","jantar","café","padaria","pizza","hamburguer","ifood","delivery","salgado"] },
   { key: "essencial",   label: "Essenciais",  icon: "bx bx-home",       keywords: ["aluguel","luz","agua","energia","internet","telefone","condominio","iptu","gas","plano"] },
   { key: "transporte",  label: "Transporte",  icon: "bx bx-car",        keywords: ["combustivel","gasolina","uber","99","onibus","metro","passagem","pedagio","estacionamento","manutenção","carro","moto"] },
-  { key: "saude",       label: "Saúde",       icon: "bx bx-plus-medical", keywords: ["medico","farmacia","remedio","consulta","exame","plano de saude","dentista","academia","gym"] },
+  { key: "saude",       label: "Saúde",       icon: "bx bx-plus-medical", keywords: ["medico","farmacia","remedio","consulta","exame","plano de saude","dentista","academia","gym","saude"] },
   { key: "lazer",       label: "Lazer",       icon: "bx bx-game",       keywords: ["cinema","streaming","netflix","spotify","show","viagem","hotel","passeio","jogo","diversao"] },
   { key: "outros",      label: "Outros",      icon: "bx bx-dots-horizontal", keywords: [] },
 ];
@@ -137,7 +137,7 @@ export function buildDashboard(items) {
     container.innerHTML = `<p class="dash-empty">Nenhum gasto registrado ainda.</p>`;
     return;
   }
-
+  
   const totals     = buildTotals(expenses);
   const grandTotal = Object.values(totals).reduce((acc, v) => acc + v.total, 0);
   const months     = [...new Set(items.map(monthKey))].sort();
