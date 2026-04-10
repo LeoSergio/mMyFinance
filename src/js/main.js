@@ -153,6 +153,23 @@ window.addEventListener("appinstalled", () => {
   deferredInstallPrompt = null;
 });
 
+// ==========================================
+// RASTREAMENTO DE INSTALAÇÃO DO PWA (ANALYTICS)
+// ==========================================
+window.addEventListener('appinstalled', (event) => {
+    console.log('O usuário instalou o MyFinance!');
+    
+    // Dispara um evento customizado para o Google Analytics
+    if (typeof gtag === 'function') {
+        gtag('event', 'pwa_install', {
+            'app_name': 'MyFinance',
+            'origem': 'Instalação pelo Navegador'
+        });
+    }
+});
+
+
+
 // ── Inicialização ─────────────────────────────────────────────────
 initTheme();
 initDrawer();
