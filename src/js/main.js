@@ -11,7 +11,7 @@ import { buildChart }                     from "./modules/chart.js";
 import { showToast, showConfirm }         from "./modules/toast.js";
 import { exportToCSV }                    from "./modules/export.js";
 
-// ── Elementos do formulário ───────────────────────────────────────
+// ── Elementos do formulário ──────  ─────────────────────────────────
 const descInput   = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 const dateInput   = document.querySelector("#date");

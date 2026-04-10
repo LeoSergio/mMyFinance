@@ -1,7 +1,7 @@
 // ==========================================
 // SW.JS — Service Worker (PWA offline básico)
 // ==========================================
-const CACHE = "financeiro-v3";
+const CACHE = "financeiro-v3.1";
 const ASSETS = [
   "./index.html",
   "./src/styles/main.css",
