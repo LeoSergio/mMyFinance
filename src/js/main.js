@@ -15,6 +15,7 @@ import { exportToCSV }                    from "./modules/export.js";
 const descInput   = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 const dateInput   = document.querySelector("#date");
+dateInput.value   = new Date().toISOString() .slice(0, 10);
 const typeSelect  = document.querySelector("#type");
 const btnNew      = document.querySelector("#btnNew");
 
@@ -60,7 +61,7 @@ btnNew.addEventListener("click", () => {
 
   descInput.value   = "";
   amountInput.value = "";
-  dateInput.value   = "";
+  dateInput.value   = new Date().toISOString().slice(0, 10);
 });
 
 // ── Ação: editar ──────────────────────────────────────────────────
@@ -95,7 +96,7 @@ function cancelEdit() {
   btnNew.classList.remove("btn--editing");
   descInput.value   = "";
   amountInput.value = "";
-  dateInput.value   = "";
+  dateInput.value   = new Date().toISOString().slice(0, 10);
   document.getElementById("btnCancelEdit")?.remove();
 }
 
