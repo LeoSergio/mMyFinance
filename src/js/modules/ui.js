@@ -8,13 +8,6 @@ const incomesEl  = document.querySelector(".incomes");
 const expensesEl = document.querySelector(".expenses");
 const totalEl    = document.querySelector(".total");
 
-/**
- * Renderiza uma linha na tabela de transações.
- * @param {Object} item
- * @param {number} index
- * @param {Function} onDelete
- * @param {Function} onEdit
- */
 export function renderItem(item, index, onDelete, onEdit) {
   const tr = document.createElement("tr");
   const dateObj       = new Date(item.date);
@@ -22,8 +15,15 @@ export function renderItem(item, index, onDelete, onEdit) {
   const isExpense     = item.type === "Fixo" || item.type === "Variavel";
   const typeLabel     = item.type === "Entrada" ? "Entrada" : item.type === "Fixo" ? "Fixa" : "Variável";
 
+  // Badge de lembrete agendado para datas futuras
+  const today        = new Date().toISOString().slice(0, 10);
+  const isFuture     = item.date > today;
+  const reminderBadge = isFuture
+    ? `<span class="badge-reminder"><i class="bx bx-bell"></i> agendado</span>`
+    : "";
+
   tr.innerHTML = `
-    <td data-label="Data">${formattedDate}</td>
+    <td data-label="Data">${formattedDate}${reminderBadge}</td>
     <td data-label="Descrição">${item.desc}</td>
     <td data-label="Valor" class="${isExpense ? "value-expense" : "value-income"}">
       ${isExpense ? "-" : "+"} R$ ${item.amount}

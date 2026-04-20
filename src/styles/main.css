@@ -1360,3 +1360,71 @@ tbody td {
   border-color: var(--color-income) !important;
 }
 .footer-link--pix i { color: inherit !important; }
+/* ==========================================
+   LEMBRETES
+   ========================================== */
+
+/* Badge "agendado" na linha da tabela */
+.badge-reminder {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: rgba(99,102,241,0.12);
+  color: var(--color-accent);
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: 99px;
+  padding: 0.1rem 0.5rem;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.badge-reminder i { font-size: 0.75rem; }
+
+/* Banner de permissão de notificação */
+#notification-banner {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.2);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+#notification-banner i {
+  font-size: 1.4rem;
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+#notification-banner p {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  min-width: 180px;
+}
+#notification-banner p strong { color: var(--text-primary); }
+#btn-allow-notifications {
+  background: var(--color-accent);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s;
+}
+#btn-allow-notifications:hover { opacity: 0.85; }
+#btn-dismiss-banner {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  padding: 0;
+  line-height: 1;
+}
