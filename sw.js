@@ -1,7 +1,7 @@
 // ==========================================
-// SW.JS — Service Worker (PWA offline básico)
+// SW.JS — Service Worker (PWA + Notificações)
 // ==========================================
-const CACHE = "financeiro-v2";
+const CACHE = "financeiro-v3";
 
 const ASSETS = [
   "./",
@@ -20,11 +20,11 @@ const ASSETS = [
   "./src/js/modules/theme.js",
   "./src/js/modules/drawer.js",
   "./src/js/modules/greeting.js",
+  "./src/js/modules/reminder.js",
   "./src/assets/icon-192.png",
   "./src/assets/icon-512.png",
 ];
 
-// Instala e cacheia apenas os arquivos locais
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open(CACHE)
@@ -33,7 +33,6 @@ self.addEventListener("install", (e) => {
   );
 });
 
-// Remove caches antigos
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys()
@@ -44,26 +43,40 @@ self.addEventListener("activate", (e) => {
   );
 });
 
-// Estratégia: Cache first para arquivos locais, Network only para externos (CDN)
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
 
-  // Recursos externos (unpkg, fonts, etc) — sempre busca da rede, sem cache
-  if (!url.origin.includes(self.location.origin)) {
+  if (url.origin !== self.location.origin) {
     e.respondWith(fetch(e.request).catch(() => new Response("")));
     return;
   }
 
-  // Recursos locais — Cache first, fallback para rede
   e.respondWith(
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
       return fetch(e.request).then((response) => {
-        // Cacheia a resposta nova para próximas visitas
         const clone = response.clone();
         caches.open(CACHE).then((cache) => cache.put(e.request, clone));
         return response;
       });
     })
+  );
+});
+
+// ── Clique na notificação ─────────────────────────────────────────
+self.addEventListener("notificationclick", (e) => {
+  e.notification.close();
+  if (e.action === "ok") return;
+
+  e.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true })
+      .then((list) => {
+        for (const client of list) {
+          if (client.url.includes("index.html") && "focus" in client) {
+            return client.focus();
+          }
+        }
+        return clients.openWindow("./index.html");
+      })
   );
 });
