@@ -10,14 +10,18 @@ import { buildDashboard, categorizeItem } from "./modules/dashboard.js";
 import { buildChart }                     from "./modules/chart.js";
 import { showToast, showConfirm }         from "./modules/toast.js";
 import { exportToCSV }                    from "./modules/export.js";
+import { initReminders, scheduleReminder, removeReminderByIndex } from "./modules/reminder.js";
 
-// ── Elementos do formulário ──────  ─────────────────────────────────
+// ── Elementos do formulário ───────────────────────────────────────
 const descInput   = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 const dateInput   = document.querySelector("#date");
 dateInput.value   = new Date().toISOString() .slice(0, 10);
 const typeSelect  = document.querySelector("#type");
 const btnNew      = document.querySelector("#btnNew");
+
+// Data padrão = hoje
+dateInput.value = new Date().toISOString().slice(0, 10);
 
 // ── Estado do modo edição ─────────────────────────────────────────
 let editingIndex = null;
@@ -50,13 +54,27 @@ btnNew.addEventListener("click", () => {
     category: categorizeItem(descInput.value),
   };
 
+  const today    = new Date().toISOString().slice(0, 10);
+  const isFuture = item.date > today;
+
   if (editingIndex !== null) {
+    // Remove lembrete antigo antes de atualizar
+    removeReminderByIndex(editingIndex);
     state.update(editingIndex, item);
+    // Agenda novo lembrete se data futura
+    if (isFuture) scheduleReminder(item, editingIndex);
     showToast("Lançamento atualizado!", "success");
     cancelEdit();
   } else {
     state.add(item);
-    showToast("Lançamento adicionado!", "success");
+    const newIndex = state.items.length - 1;
+    // Agenda lembrete e informa o usuário
+    if (isFuture) {
+      scheduleReminder(item, newIndex);
+      showToast("Lançamento agendado! Você receberá um lembrete na data.", "info", null, 5000);
+    } else {
+      showToast("Lançamento adicionado!", "success");
+    }
   }
 
   descInput.value   = "";
@@ -76,9 +94,8 @@ function handleEdit(index) {
   btnNew.innerHTML  = '<i class="bx bx-save"></i> Salvar';
   btnNew.classList.add("btn--editing");
 
-  // Botão cancelar edição (insere uma vez só)
   if (!document.getElementById("btnCancelEdit")) {
-    const btnCancel = document.createElement("button");
+    const btnCancel     = document.createElement("button");
     btnCancel.id        = "btnCancelEdit";
     btnCancel.innerHTML = '<i class="bx bx-x"></i> Cancelar';
     btnCancel.className = "btn-cancel-edit";
@@ -106,6 +123,7 @@ function handleDelete(index) {
   showConfirm(
     `Excluir "<strong>${item.desc}</strong>"?`,
     () => {
+      removeReminderByIndex(index);
       state.remove(index);
       showToast("Lançamento excluído.", "info");
     }
@@ -113,7 +131,15 @@ function handleDelete(index) {
 }
 
 // ── Ação: data selecionada ────────────────────────────────────────
-dateInput.addEventListener("change", () => updateSelectedDate(dateInput.value));
+dateInput.addEventListener("change", () => {
+  updateSelectedDate(dateInput.value);
+
+  // Avisa o usuário se selecionou data futura
+  const today = new Date().toISOString().slice(0, 10);
+  if (dateInput.value > today) {
+    showToast("Data futura selecionada — um lembrete será enviado no dia do lançamento.", "info", null, 4000);
+  }
+});
 
 // ── Ação: imprimir ────────────────────────────────────────────────
 window.btnPrint = () => window.print();
@@ -154,25 +180,46 @@ window.addEventListener("appinstalled", () => {
   deferredInstallPrompt = null;
 });
 
-// ==========================================
-// RASTREAMENTO DE INSTALAÇÃO DO PWA (ANALYTICS)
-// ==========================================
-window.addEventListener('appinstalled', (event) => {
-    console.log('O usuário instalou o MyFinance!');
-    
-    // Dispara um evento customizado para o Google Analytics
-    if (typeof gtag === 'function') {
-        gtag('event', 'pwa_install', {
-            'app_name': 'MyFinance',
-            'origem': 'Instalação pelo Navegador'
-        });
-    }
+window.addEventListener("appinstalled", () => {
+  console.log("O usuário instalou o MyFinance!");
+  if (typeof gtag === "function") {
+    gtag("event", "pwa_install", { app_name: "MyFinance", origem: "Instalação pelo Navegador" });
+  }
 });
-
-
 
 // ── Inicialização ─────────────────────────────────────────────────
 initTheme();
 initDrawer();
 initGreeting();
 state.load();
+initReminders();
+
+// ── Banner de permissão de notificação ───────────────────────────
+(function initNotificationBanner() {
+  if (!("Notification" in window)) return;
+  if (Notification.permission === "granted") return;
+  if (localStorage.getItem("notif_banner_dismissed")) return;
+
+  const banner  = document.getElementById("notification-banner");
+  const btnAllow   = document.getElementById("btn-allow-notifications");
+  const btnDismiss = document.getElementById("btn-dismiss-banner");
+
+  if (!banner) return;
+  banner.style.display = "flex";
+
+  btnAllow.addEventListener("click", async () => {
+    const granted = await Notification.requestPermission();
+    banner.style.display = "none";
+    if (granted === "granted") {
+      showToast("Lembretes ativados!", "success");
+      initReminders();
+    } else {
+      showToast("Permissão negada. Você pode ativar nas configurações do navegador.", "info", null, 5000);
+    }
+  });
+
+  btnDismiss.addEventListener("click", () => {
+    banner.style.display = "none";
+    localStorage.setItem("notif_banner_dismissed", "1");
+  });
+})();
