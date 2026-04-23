@@ -2,6 +2,7 @@
 // MAIN.JS — Ponto de entrada da aplicação
 // ==========================================
 import state                              from "./core/state.js";
+import { saveItems }                      from "./core/storage.js";
 import { initTheme }                      from "./modules/theme.js";
 import { initDrawer }                     from "./modules/drawer.js";
 import { initGreeting }                   from "./modules/greeting.js";
@@ -129,6 +130,87 @@ function handleDelete(index) {
     }
   );
 }
+
+// ── Ação: limpar dados por seleção ────────────────────────────────
+window.btnClear = () => {
+  const options = [
+    { label: "Tudo",          value: "todos"    },
+    { label: "Entradas",      value: "Entrada"  },
+    { label: "Saídas Fixas",  value: "Fixo"     },
+    { label: "Saídas Variáveis", value: "Variavel" },
+  ];
+
+  // Cria o modal de seleção
+  const existing = document.getElementById("clear-modal");
+  if (existing) existing.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id        = "clear-modal";
+  overlay.className = "confirm-overlay";
+  overlay.innerHTML = `
+    <div class="confirm-box">
+      <div class="confirm-icon" style="color:var(--color-expense)">
+        <i class="bx bx-trash"></i>
+      </div>
+      <p class="confirm-msg">O que deseja limpar?</p>
+      <div class="clear-options">
+        ${options.map(o => `
+          <button class="clear-option-btn" data-value="${o.value}">
+            ${o.value === "todos" ? '<i class="bx bx-trash"></i>' : '<i class="bx bx-filter"></i>'}
+            ${o.label}
+          </button>
+        `).join("")}
+      </div>
+      <div class="confirm-actions" style="margin-top:1rem">
+        <button class="confirm-cancel">Cancelar</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => overlay.classList.add("confirm--visible"))
+  );
+
+  const close = () => {
+    overlay.classList.remove("confirm--visible");
+    setTimeout(() => overlay.remove(), 250);
+  };
+
+  overlay.querySelector(".confirm-cancel").addEventListener("click", close);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) close(); });
+
+  overlay.querySelectorAll(".clear-option-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const tipo = btn.dataset.value;
+      close();
+
+      const label = options.find(o => o.value === tipo).label;
+
+      showConfirm(
+        `Excluir permanentemente <strong>${label}</strong>?<br>
+        <small style="color:var(--text-muted);font-size:0.8rem">Essa ação não pode ser desfeita.</small>`,
+        () => {
+          if (tipo === "todos") {
+            state._items = [];
+            saveItems([]);
+          } else {
+            const filtrados = state.items.filter(i => i.type !== tipo);
+            state._items = filtrados;
+            saveItems(filtrados);
+          }
+          state._notify();
+          showToast(`${label} removidas com sucesso.`, "success");
+        }
+      );
+    });
+  });
+
+  document.addEventListener("keydown", function esc(e) {
+    if (e.key === "Escape") { close(); document.removeEventListener("keydown", esc); }
+  });
+};
+
 
 // ── Ação: data selecionada ────────────────────────────────────────
 dateInput.addEventListener("change", () => {
