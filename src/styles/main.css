@@ -533,6 +533,39 @@ main {
 
 #btnNew:hover { opacity: 0.9; transform: scale(1.02); }
 
+
+/* ── LIMPAR DADOS ── */
+.clear-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.clear-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: var(--bg-page);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.clear-option-btn:hover {
+  border-color: var(--color-expense);
+  color: var(--color-expense);
+  background: rgba(239,68,68,0.05);
+}
+
+.clear-option-btn i { font-size: 1rem; }
 /* ==========================================
    DATA SELECIONADA
    ========================================== */
