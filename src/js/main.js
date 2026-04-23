@@ -17,6 +17,7 @@ import { initReminders, scheduleReminder, removeReminderByIndex } from "./module
 const descInput   = document.querySelector("#desc");
 const amountInput = document.querySelector("#amount");
 const dateInput   = document.querySelector("#date");
+dateInput.value   = new Date().toISOString() .slice(0, 10);
 const typeSelect  = document.querySelector("#type");
 const btnNew      = document.querySelector("#btnNew");
 

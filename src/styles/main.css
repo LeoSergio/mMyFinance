@@ -1461,3 +1461,27 @@ tbody td {
   padding: 0;
   line-height: 1;
 }
+
+@media (max-width: 480px) {
+  #notification-banner {
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  #notification-banner p {
+    width: 100%;
+    min-width: unset;
+  }
+
+  #notification-banner i {
+    display: none;
+  }
+
+  #btn-allow-notifications {
+    flex: 1;
+  }
+
+  #btn-dismiss-banner {
+    flex-shrink: 0;
+  }
+}
