@@ -186,7 +186,7 @@ window.btnClear = () => {
       close();
 
       const label = options.find(o => o.value === tipo).label;
-
+      
       showConfirm(
         `Excluir permanentemente <strong>${label}</strong>?<br>
         <small style="color:var(--text-muted);font-size:0.8rem">Essa ação não pode ser desfeita.</small>`,
