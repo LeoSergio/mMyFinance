@@ -12,6 +12,11 @@ import { buildChart }                     from "./modules/chart.js";
 import { showToast, showConfirm }         from "./modules/toast.js";
 import { exportToCSV }                    from "./modules/export.js";
 import { initReminders, scheduleReminder, removeReminderByIndex } from "./modules/reminder.js";
+import { buildBudgetSection }                from "./modules/budget.js";
+import { buildRule5030 }                     from "./modules/rule5030.js";
+import { buildInsights }                     from "./modules/insights.js";
+import { buildGoals }                        from "./modules/goals.js";
+import { buildRecurrences, initRecurrences } from "./modules/recurrences.js";
 
 // ── Elementos do formulário ───────────────────────────────────────
 const descInput   = document.querySelector("#desc");
@@ -36,6 +41,11 @@ function render(items) {
   updateTotals(items);
   buildDashboard(items);
   buildChart(items);
+  buildBudgetSection(items);
+  buildRule5030(items);
+  buildInsights(items);
+  buildGoals();
+  buildRecurrences();
 }
 
 state.subscribe(render);
@@ -274,7 +284,15 @@ initTheme();
 initDrawer();
 initGreeting();
 state.load();
+initRecurrences(state); // cria automaticamente itens vencidos
 initReminders();
+
+// Recarrega seção de orçamento quando o usuário salva novos limites
+document.addEventListener("budgets-updated",    () => buildBudgetSection(state.items));
+// Recarrega metas ao criar/editar/excluir
+document.addEventListener("goals-updated",       () => buildGoals());
+// Recarrega recorrências ao criar/editar/excluir/pausar
+document.addEventListener("recurrences-updated", () => buildRecurrences());
 
 // ── Banner de permissão de notificação ───────────────────────────
 (function initNotificationBanner() {
