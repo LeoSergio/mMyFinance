@@ -300,13 +300,15 @@ export function buildRule5030(items) {
       <!-- Score gauge -->
       <div class="rule-gauge-section">
         ${buildGauge(score)}
-        <p class="rule-gauge-subtitle">Score de aderência à regra</p>
-        ${income > 0 ? `
-          <div class="rule-income-info">
-            <i class="bx bx-wallet"></i>
-            Renda do mês: <strong>R$ ${income.toFixed(2)}</strong>
-          </div>
-        ` : ""}
+        <div class="rule-gauge-meta">
+          <p class="rule-gauge-subtitle">Score de aderência à regra</p>
+          ${income > 0 ? `
+            <div class="rule-income-info">
+              <i class="bx bx-wallet"></i>
+              <span>Renda: <strong>R$ ${income.toFixed(2)}</strong></span>
+            </div>
+          ` : ""}
+        </div>
       </div>
 
       <!-- Pilares -->

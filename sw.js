@@ -1,7 +1,7 @@
 // ==========================================
 // SW.JS — Service Worker (PWA + Notificações)
 // ==========================================
-const CACHE = "financeiro-v5";
+const CACHE = "financeiro-v6";
 
 const ASSETS = [
   "./",

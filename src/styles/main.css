@@ -1825,6 +1825,10 @@ tbody td {
   padding: 1.5rem;
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 /* ── Cabeçalho ── */
@@ -1835,6 +1839,9 @@ tbody td {
   gap: 1rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .rule-title-group {
@@ -1842,6 +1849,7 @@ tbody td {
   align-items: center;
   gap: 0.75rem;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .rule-title-group .dash-title { margin-bottom: 0; }
@@ -1868,9 +1876,13 @@ tbody td {
 /* ── Body: gauge + pilares ── */
 .rule-body {
   display: grid;
-  grid-template-columns: 200px 1fr;
+  grid-template-columns: minmax(0, 180px) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 /* ── Gauge ── */
@@ -1878,7 +1890,11 @@ tbody td {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .rule-gauge-wrap {
@@ -1886,12 +1902,14 @@ tbody td {
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
+  max-width: 100%;
 }
 
 .rule-gauge-svg {
-  width: 140px;
-  height: 140px;
-  overflow: visible;
+  width: 130px;
+  height: 130px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .rule-gauge-score {
@@ -1921,8 +1939,9 @@ tbody td {
 }
 
 .rule-gauge-empty {
-  width: 140px;
-  height: 140px;
+  width: 130px;
+  height: 130px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1933,12 +1952,25 @@ tbody td {
   font-size: 0.78rem;
   border: 2px dashed var(--border-color);
   border-radius: 50%;
+  box-sizing: border-box;
+  padding: 0.5rem;
 }
 .rule-gauge-empty i { font-size: 1.8rem; }
+
+.rule-gauge-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
 
 .rule-income-info {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.35rem;
   font-size: 0.76rem;
   color: var(--text-secondary);
@@ -1946,9 +1978,12 @@ tbody td {
   border: 1px solid var(--border-color);
   border-radius: 99px;
   padding: 0.25rem 0.65rem;
-  white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
+  word-break: break-word;
+  text-align: center;
 }
-.rule-income-info i { font-size: 0.9rem; color: var(--color-income); }
+.rule-income-info i { font-size: 0.9rem; color: var(--color-income); flex-shrink: 0; }
 .rule-income-info strong { color: var(--text-primary); }
 
 /* ── Pilares ── */
@@ -1956,6 +1991,10 @@ tbody td {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .pillar-card {
@@ -1967,6 +2006,11 @@ tbody td {
   flex-direction: column;
   gap: 0.55rem;
   transition: border-color 0.2s, transform 0.15s;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .pillar-card:hover { transform: translateX(3px); }
@@ -1982,6 +2026,8 @@ tbody td {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .pillar-icon-wrap {
@@ -2009,27 +2055,29 @@ tbody td {
 .pillar-info {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
-  flex: 1;
+  gap: 0.15rem;
+  flex: 1 1 auto;
   min-width: 0;
+  overflow: hidden;
 }
 
 .pillar-label {
   font-size: 0.88rem;
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.25;
 }
 
 .pillar-subtitle {
   font-size: 0.73rem;
   color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
 .pillar-pct-badge {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 800;
   color: var(--pillar-color);
   background: color-mix(in srgb, var(--pillar-color) 10%, transparent);
@@ -2046,8 +2094,11 @@ tbody td {
 /* Valores realizados vs ideal */
 .pillar-amounts {
   display: flex;
-  gap: 1.5rem;
+  gap: 1rem;
   align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
 }
 
 .pillar-amount-real,
@@ -2055,6 +2106,8 @@ tbody td {
   display: flex;
   flex-direction: column;
   gap: 0.1rem;
+  min-width: 0;
+  flex: 1 1 0;
 }
 
 .pillar-amount-label {
@@ -2066,8 +2119,9 @@ tbody td {
 }
 
 .pillar-amount-value {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
+  word-break: break-all;
 }
 
 .pillar-ideal-value { color: var(--text-secondary) !important; font-size: 0.95rem !important; }
@@ -2155,28 +2209,6 @@ tbody td {
 }
 .rule-tip--success i { color: var(--color-income); }
 
-/* ── Responsivo ── */
-@media (max-width: 700px) {
-  .rule-body {
-    grid-template-columns: 1fr;
-  }
-  .rule-gauge-section {
-    flex-direction: row;
-    align-items: center;
-    gap: 1.25rem;
-    background: var(--bg-page);
-    border-radius: var(--radius-sm);
-    padding: 0.85rem 1rem;
-    border: 1px solid var(--border-color);
-  }
-  .rule-gauge-svg { width: 100px; height: 100px; }
-  .rule-gauge-subtitle { text-align: left; }
-}
-
-@media (max-width: 480px) {
-  .pillar-amounts { flex-wrap: wrap; gap: 0.75rem; }
-  .rule-header    { flex-direction: column; align-items: flex-start; }
-}
 
 /* ==========================================
    ANÁLISE INTELIGENTE — insights.js
