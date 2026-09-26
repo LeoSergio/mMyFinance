@@ -1,7 +1,7 @@
 // ==========================================
 // SW.JS — Service Worker (PWA + Notificações)
 // ==========================================
-const CACHE = "financeiro-v4";
+const CACHE = "financeiro-v5";
 
 const ASSETS = [
   "./",
@@ -21,6 +21,11 @@ const ASSETS = [
   "./src/js/modules/drawer.js",
   "./src/js/modules/greeting.js",
   "./src/js/modules/reminder.js",
+  "./src/js/modules/budget.js",
+  "./src/js/modules/rule5030.js",
+  "./src/js/modules/insights.js",
+  "./src/js/modules/goals.js",
+  "./src/js/modules/recurrences.js",
   "./src/assets/icon-192.png",
   "./src/assets/icon-512.png",
 ];

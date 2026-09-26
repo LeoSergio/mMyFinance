@@ -67,12 +67,19 @@
    ========================================== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: var(--bg-page);
   color: var(--text-primary);
   transition: background 0.3s, color 0.3s;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ==========================================
