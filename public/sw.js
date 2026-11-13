@@ -1,7 +1,7 @@
 // ==========================================
 // SW.JS — Service Worker (PWA + Notificações)
 // ==========================================
-const CACHE = "financeiro-v7";
+const CACHE = "financeiro-v8";
 
 const ASSETS = [
   "./",
@@ -9,6 +9,7 @@ const ASSETS = [
   "./manifest.json",
   "./src/assets/icon-192.png",
   "./src/assets/icon-512.png",
+  "https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css",
 ];
 
 self.addEventListener("message", (e) => {
@@ -37,9 +38,10 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
+  const isSameOrigin = url.origin === self.location.origin;
+  const isBoxicons   = url.origin.includes("unpkg.com") && url.pathname.includes("boxicons");
 
-  if (url.origin !== self.location.origin) {
-    e.respondWith(fetch(e.request).catch(() => new Response("")));
+  if (!isSameOrigin && !isBoxicons) {
     return;
   }
 
@@ -47,10 +49,12 @@ self.addEventListener("fetch", (e) => {
     caches.match(e.request).then((cached) => {
       if (cached) return cached;
       return fetch(e.request).then((response) => {
-        const clone = response.clone();
-        caches.open(CACHE).then((cache) => cache.put(e.request, clone));
+        if (response && response.status === 200) {
+          const clone = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(e.request, clone));
+        }
         return response;
-      });
+      }).catch(() => caches.match(e.request));
     })
   );
 });
