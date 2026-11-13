@@ -1,0 +1,13 @@
+# Dependências Node
+node_modules/
+dist/
+
+# Ambiente Virtual Python
+.venv/
+__pycache__/
+*.pyc
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+

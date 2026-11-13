@@ -15,23 +15,30 @@ Aplicação web para controle de receitas e despesas pessoais. Funciona como PWA
 
 ## Como executar
 
-O projeto usa ES Modules (`type="module"`), então **não abre corretamente ao clicar duas vezes no `index.html`**. É necessário um servidor HTTP local.
+O projeto usa **Vite** com Vanilla JS e ES Modules.
 
-**Opção 1 — VS Code (recomendado):**
-Instale a extensão [Live Server](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) e clique em **Go Live** no canto inferior direito.
-
-**Opção 2 — Terminal com Python:**
+### 1. Instalar dependências
 ```bash
-python -m http.server 3000
+npm install
+```
+
+### 2. Iniciar servidor de desenvolvimento (com live reload)
+```bash
+npm run dev
 ```
 Acesse `http://localhost:3000`.
 
-**Opção 3 — Terminal com Node.js:**
+### 3. Gerar build de produção (otimizado e minificado na pasta `dist/`)
 ```bash
-npx serve .
+npm run build
 ```
 
-> **PWA e service worker** só funcionam em HTTPS. Para testar a instalação no celular, use [Netlify Drop](https://app.netlify.com/drop) ou [GitHub Pages](https://pages.github.com).
+### 4. Testar o build de produção localmente
+```bash
+npm run preview
+```
+
+> **PWA e Service Worker**: Para testar a instalação no celular, publique a pasta `dist/` ou o projeto em HTTPS (ex.: [GitHub Pages](https://pages.github.com) ou [Vercel](https://vercel.com)).
 
 ---
 
