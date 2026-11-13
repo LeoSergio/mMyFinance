@@ -2,29 +2,44 @@
 // MODULES / UI.JS — Renderização da interface
 // ==========================================
 import { categorizeItem } from "./dashboard.js";
+import { getLocalDateString } from "../core/date.js";
+import { getCategoryMeta } from "./category.js";
 
 const tbody      = document.querySelector("tbody");
 const incomesEl  = document.querySelector(".incomes");
 const expensesEl = document.querySelector(".expenses");
 const totalEl    = document.querySelector(".total");
 
-export function renderItem(item, index, onDelete, onEdit) {
+export function renderItem(item, onDelete, onEdit) {
   const tr = document.createElement("tr");
-  const dateObj       = new Date(item.date);
-  const formattedDate = dateObj.toLocaleDateString("pt-BR", { timeZone: "UTC" });
+  if (item.id) tr.dataset.id = item.id;
+
+  const dateParts = item.date ? item.date.split("-") : [];
+  const formattedDate =
+    dateParts.length === 3
+      ? `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`
+      : new Date(item.date).toLocaleDateString("pt-BR", { timeZone: "UTC" });
+
   const isExpense     = item.type === "Fixo" || item.type === "Variavel";
   const typeLabel     = item.type === "Entrada" ? "Entrada" : item.type === "Fixo" ? "Fixa" : "Variável";
 
   // Badge de lembrete agendado para datas futuras
-  const today        = new Date().toISOString().slice(0, 10);
+  const today        = getLocalDateString();
   const isFuture     = item.date > today;
   const reminderBadge = isFuture
     ? `<span class="badge-reminder"><i class="bx bx-bell"></i> agendado</span>`
     : "";
 
+  const catMeta = getCategoryMeta(item.category || categorizeItem(item.desc));
+
   tr.innerHTML = `
     <td data-label="Data">${formattedDate}${reminderBadge}</td>
-    <td data-label="Descrição">${item.desc}</td>
+    <td data-label="Descrição">
+      <div class="table-desc-wrap">
+        <span class="table-desc-text">${item.desc}</span>
+        <span class="table-cat-badge"><i class="${catMeta.icon}"></i> ${catMeta.label}</span>
+      </div>
+    </td>
     <td data-label="Valor" class="${isExpense ? "value-expense" : "value-income"}">
       ${isExpense ? "-" : "+"} R$ ${item.amount}
     </td>
@@ -35,14 +50,15 @@ export function renderItem(item, index, onDelete, onEdit) {
       </span>
     </td>
     <td class="columnAction">
-      <button class="btn-edit"   title="Editar"><i class="bx bx-edit"></i></button>
-      <button class="btn-delete" title="Excluir"><i class="bx bx-trash"></i></button>
+      <button class="btn-edit"   title="Editar" aria-label="Editar lançamento"><i class="bx bx-edit"></i></button>
+      <button class="btn-delete" title="Excluir" aria-label="Excluir lançamento"><i class="bx bx-trash"></i></button>
     </td>
   `;
 
   tbody.appendChild(tr);
-  tr.querySelector(".btn-delete").addEventListener("click", () => onDelete(index));
-  tr.querySelector(".btn-edit").addEventListener("click",   () => onEdit(index));
+  const identifier = item.id || item;
+  tr.querySelector(".btn-delete").addEventListener("click", () => onDelete(identifier));
+  tr.querySelector(".btn-edit").addEventListener("click",   () => onEdit(identifier));
 }
 
 export function clearTable() { tbody.innerHTML = ""; }
@@ -63,9 +79,9 @@ export function updateTotals(items) {
 export function updateSelectedDate(dateValue) {
   const el = document.getElementById("selected-date-display");
   if (!el || !dateValue) return;
-  const d = new Date(dateValue);
+  const d = new Date(dateValue + "T00:00:00");
   el.textContent = d.toLocaleDateString("pt-BR", {
-    timeZone: "UTC", weekday: "long", year: "numeric", month: "long", day: "numeric",
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
   });
   el.parentElement.style.display = "flex";
 }

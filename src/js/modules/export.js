@@ -1,12 +1,9 @@
 // ==========================================
 // MODULES / EXPORT.JS — Exportar dados
 // ==========================================
+import { getCategoryMeta } from "./category.js";
 
 const TYPE_LABELS = { Entrada: "Entrada", Fixo: "Saída Fixa", Variavel: "Saída Variável" };
-const CAT_LABELS  = {
-  alimentacao: "Alimentação", essencial: "Essenciais", transporte: "Transporte",
-  saude: "Saúde", lazer: "Lazer", outros: "Outros",
-};
 
 /**
  * Converte a lista de itens para CSV e faz o download.
@@ -28,7 +25,7 @@ export function exportToCSV(items) {
       const date = new Date(item.date).toLocaleDateString("pt-BR", { timeZone: "UTC" });
       const val  = (item.type === "Entrada" ? "" : "-") + Number(item.amount).toFixed(2);
       const type = TYPE_LABELS[item.type] || item.type;
-      const cat  = CAT_LABELS[item.category] || item.category || "Outros";
+      const cat  = getCategoryMeta(item.category).label;
       // Escapa aspas duplas dentro dos campos
       const escape = (v) => `"${String(v).replace(/"/g, '""')}"`;
       return [escape(date), escape(item.desc), val, escape(type), escape(cat)].join(",");

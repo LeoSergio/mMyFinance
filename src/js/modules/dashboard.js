@@ -1,39 +1,39 @@
 // ==========================================
-// MODULES / DASHBOARD.JS — Análise de gastos
+// MODULES / DASHBOARD.JS — Análise de gastos dinâmica
 // ==========================================
-
-const CATEGORIES = [
-  { key: "alimentacao", label: "Alimentação", icon: "bx bx-food-menu", keywords: ["comida","alimenta","mercado","supermercado","restaurante","lanche","almoço","jantar","café","padaria","pizza","hamburguer","ifood","delivery","salgado"] },
-  { key: "essencial",   label: "Essenciais",  icon: "bx bx-home",       keywords: ["aluguel","luz","agua","energia","internet","telefone","condominio","iptu","gas","plano"] },
-  { key: "transporte",  label: "Transporte",  icon: "bx bx-car",        keywords: ["combustivel","gasolina","uber","99","onibus","metro","passagem","pedagio","estacionamento","manutenção","carro","moto"] },
-  { key: "saude",       label: "Saúde",       icon: "bx bx-plus-medical", keywords: ["medico","farmacia","remedio","consulta","exame","plano de saude","dentista","academia","gym","saude"] },
-  { key: "lazer",       label: "Lazer",       icon: "bx bx-game",       keywords: ["cinema","streaming","netflix","spotify","show","viagem","hotel","passeio","jogo","diversao"] },
-  { key: "outros",      label: "Outros",      icon: "bx bx-dots-horizontal", keywords: [] },
-];
+import { getCategoryMeta, suggestCategory } from "./category.js";
 
 const MONTH_NAMES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
-const normalize  = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const monthKey   = (item) => item.date.slice(0, 7);
 const monthLabel = (key)  => { const [y,m] = key.split("-"); return `${MONTH_NAMES[Number(m)-1]} ${y}`; };
 
 export function categorizeItem(desc) {
-  const lower = normalize(desc);
-  for (const cat of CATEGORIES) {
-    if (cat.key === "outros") continue;
-    if (cat.keywords.some((kw) => lower.includes(normalize(kw)))) return cat.key;
-  }
-  return "outros";
+  return suggestCategory(desc);
 }
 
 function buildTotals(expenses) {
-  const totals = Object.fromEntries(CATEGORIES.map((c) => [c.key, { total: 0, items: [] }]));
+  const totals = {};
+
   expenses.forEach((item) => {
-    const cat = item.category || categorizeItem(item.desc);
-    if (!totals[cat]) totals[cat] = { total: 0, items: [] };
-    totals[cat].total += Number(item.amount);
-    totals[cat].items.push(item);
+    const rawCat = item.category || suggestCategory(item.desc, item.type);
+    const meta   = getCategoryMeta(rawCat);
+    const key    = meta.key;
+
+    if (!totals[key]) {
+      totals[key] = {
+        key,
+        label: meta.label,
+        icon:  meta.icon,
+        total: 0,
+        items: [],
+      };
+    }
+
+    totals[key].total += Number(item.amount);
+    totals[key].items.push(item);
   });
+
   return totals;
 }
 
@@ -42,7 +42,7 @@ function renderCategoryCard(cat, total, catItems, grandTotal, isExpanded) {
   const itemRows = catItems
     .sort((a, b) => Number(b.amount) - Number(a.amount))
     .map((i) => {
-      const d = new Date(i.date).toLocaleDateString("pt-BR", { timeZone: "UTC" });
+      const d = new Date(i.date + "T00:00:00").toLocaleDateString("pt-BR");
       return `<div class="dash-item-row">
         <span class="dash-item-desc">${i.desc}</span>
         <span class="dash-item-meta">${d}</span>
@@ -72,16 +72,19 @@ function renderCategoryCard(cat, total, catItems, grandTotal, isExpanded) {
     </div>`;
 }
 
-function renderComparison(items, months) {
+function renderComparison(items, months, presentCategories) {
   if (months.length < 2) return "";
   const recent = months.slice(-3);
 
-  const rows = CATEGORIES.map((cat) => {
+  const rows = presentCategories.map((cat) => {
     const cols = recent.map((mk) => {
       const exp = items.filter((i) => monthKey(i) === mk && (i.type === "Fixo" || i.type === "Variavel"));
-      return exp.filter((i) => (i.category || categorizeItem(i.desc)) === cat.key)
-                .reduce((acc, i) => acc + Number(i.amount), 0);
+      return exp.filter((i) => {
+        const itemCat = i.category || suggestCategory(i.desc, i.type);
+        return getCategoryMeta(itemCat).key === cat.key;
+      }).reduce((acc, i) => acc + Number(i.amount), 0);
     });
+
     if (cols.every((v) => v === 0)) return "";
 
     const cells = cols.map((v, idx) => {
@@ -94,11 +97,13 @@ function renderComparison(items, months) {
           ? `<span class="trend trend--down"><i class="bx bx-trending-down"></i> -R$ ${Math.abs(diff).toFixed(2)}</span>`
           : `<span class="trend trend--eq">—</span>`;
       }
-      return `<td><span class="cmp-value">${v > 0 ? "R$ "+v.toFixed(2) : "—"}</span>${trend}</td>`;
+      return `<td><span class="cmp-value">${v > 0 ? "R$ " + v.toFixed(2) : "—"}</span>${trend}</td>`;
     }).join("");
 
     return `<tr><td class="cmp-cat"><i class="${cat.icon}"></i> ${cat.label}</td>${cells}</tr>`;
-  }).join("");
+  }).filter(Boolean).join("");
+
+  if (!rows) return "";
 
   const headers = recent.map((mk) => `<th>${monthLabel(mk)}</th>`).join("");
 
@@ -138,12 +143,11 @@ export function buildDashboard(items) {
     return;
   }
   
-  const totals     = buildTotals(expenses);
+  const totals = buildTotals(expenses);
   const grandTotal = Object.values(totals).reduce((acc, v) => acc + v.total, 0);
-  const months     = [...new Set(items.map(monthKey))].sort();
+  const months = [...new Set(items.map(monthKey))].sort();
 
-  const sorted = CATEGORIES
-    .map((c) => ({ ...c, ...totals[c.key] }))
+  const sorted = Object.values(totals)
     .filter((c) => c.total > 0)
     .sort((a, b) => b.total - a.total);
 
@@ -154,7 +158,7 @@ export function buildDashboard(items) {
   container.innerHTML = `
     <h3 class="dash-title"><i class="bx bx-bar-chart-alt-2"></i> Análise de Gastos</h3>
     <div class="dash-grid">${cards}</div>
-    ${renderComparison(items, months)}
+    ${renderComparison(items, months, sorted)}
   `;
 
   bindToggleEvents(container);
