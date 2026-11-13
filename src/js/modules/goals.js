@@ -3,6 +3,7 @@
 // ==========================================
 import { getGoals, saveGoals } from "../core/storage.js";
 import { showToast }           from "./toast.js";
+import { getLocalDateString }  from "../core/date.js";
 
 // ── Ícones disponíveis para escolha ──────────────────────────────
 const GOAL_ICONS = [
@@ -60,7 +61,7 @@ function renderGoalCard(goal) {
 
   if (goal.deadline) {
     const days   = daysUntil(goal.deadline);
-    const months = monthsBetween(new Date().toISOString().slice(0, 10), goal.deadline);
+    const months = monthsBetween(getLocalDateString(), goal.deadline);
     monthlyNeeded = remaining > 0 ? remaining / months : 0;
 
     if (isComplete) {
@@ -220,7 +221,7 @@ function openGoalModal(goalToEdit = null) {
             <i class="bx bx-calendar"></i> Prazo (opcional)
           </label>
           <input type="date" id="goal-deadline" class="goal-field-input"
-            min="${new Date().toISOString().slice(0, 10)}"
+            min="${getLocalDateString()}"
             value="${g.deadline || ""}">
         </div>
 
@@ -346,7 +347,7 @@ function openGoalModal(goalToEdit = null) {
         deadline,
         icon:         selectedIcon,
         color:        selectedColor,
-        createdAt:    new Date().toISOString().slice(0, 10),
+        createdAt:    getLocalDateString(),
       });
     }
 

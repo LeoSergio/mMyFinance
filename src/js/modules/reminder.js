@@ -1,6 +1,7 @@
 // ==========================================
 // MODULES / REMINDER.JS — Lembretes via notificação
 // ==========================================
+import { getLocalDateString } from "../core/date.js";
 
 const REMINDERS_KEY = "app_reminders";
 
@@ -18,22 +19,21 @@ function saveReminders(list) {
 
 /**
  * Cria um lembrete se o item tiver data posterior a hoje.
- * @param {{ date: string, desc: string, amount: string, type: string }} item
- * @param {number} index - índice do item no array de state
+ * @param {{ id?: string, date: string, desc: string, amount: string, type: string }} item
  */
-export function scheduleReminder(item, index) {
-  const today = new Date().toISOString().slice(0, 10);
+export function scheduleReminder(item) {
+  const today = getLocalDateString();
   if (item.date <= today) return;
 
   const list = getReminders();
-  const id   = `${index}-${item.date}-${item.desc}`;
+  const id   = item.id ? `rem_${item.id}` : `rem_${item.date}_${item.desc}`;
 
   // Evita duplicata
-  if (list.find((r) => r.id === id)) return;
+  if (list.find((r) => r.id === id || (item.id && r.itemId === item.id))) return;
 
   list.push({
     id,
-    index,
+    itemId:    item.id || null,
     date:      item.date,
     desc:      item.desc,
     amount:    item.amount,
@@ -46,10 +46,22 @@ export function scheduleReminder(item, index) {
 
 // ── Remove lembrete de item excluído ──────────────────────────────
 
-export function removeReminderByIndex(index) {
-  const list = getReminders().filter((r) => r.index !== index);
+/**
+ * Remove lembrete por ID do item ou índice legado.
+ * @param {string|number} idOrIndex
+ */
+export function removeReminder(idOrIndex) {
+  const list = getReminders().filter((r) => {
+    if (typeof idOrIndex === "string") {
+      return r.itemId !== idOrIndex && r.id !== `rem_${idOrIndex}`;
+    }
+    return r.index !== idOrIndex;
+  });
   saveReminders(list);
 }
+
+// Alias para retrocompatibilidade
+export const removeReminderByIndex = removeReminder;
 
 // ── Permissão ─────────────────────────────────────────────────────
 
@@ -102,7 +114,7 @@ export async function checkReminders() {
   if (!("Notification" in window)) return;
   if (Notification.permission !== "granted") return;
 
-  const today   = new Date().toISOString().slice(0, 10);
+  const today   = getLocalDateString();
   const list    = getReminders();
   let   changed = false;
 
