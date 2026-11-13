@@ -1,7 +1,7 @@
 // ==========================================
 // SW.JS — Service Worker (PWA + Notificações)
 // ==========================================
-const CACHE = "financeiro-v6";
+const CACHE = "financeiro-v7";
 
 const ASSETS = [
   "./",
@@ -10,6 +10,12 @@ const ASSETS = [
   "./src/assets/icon-192.png",
   "./src/assets/icon-512.png",
 ];
+
+self.addEventListener("message", (e) => {
+  if (e.data && e.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
 
 self.addEventListener("install", (e) => {
   e.waitUntil(

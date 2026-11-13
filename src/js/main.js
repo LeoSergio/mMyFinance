@@ -237,7 +237,48 @@ window.btnExport = () => {
 
 // ── PWA: registra service worker e botão de instalação ───────────
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("./sw.js").catch(() => {});
+  window.addEventListener("load", async () => {
+    try {
+      const reg = await navigator.serviceWorker.register("./sw.js");
+
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+
+      const promptUpdate = (worker) => {
+        showToast("Nova versão do app disponível!", "info", {
+          label: "Atualizar",
+          fn: () => {
+            if (worker) {
+              worker.postMessage({ type: "SKIP_WAITING" });
+            } else {
+              window.location.reload();
+            }
+          },
+        }, 12000);
+      };
+
+      if (reg.waiting) {
+        promptUpdate(reg.waiting);
+      }
+
+      reg.addEventListener("updatefound", () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+        newWorker.addEventListener("statechange", () => {
+          if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+            promptUpdate(newWorker);
+          }
+        });
+      });
+    } catch (err) {
+      console.warn("Falha ao registrar ServiceWorker:", err);
+    }
+  });
 }
 
 let deferredInstallPrompt = null;
@@ -263,9 +304,6 @@ btnInstall.addEventListener("click", async () => {
 window.addEventListener("appinstalled", () => {
   btnInstall.style.display = "none";
   deferredInstallPrompt = null;
-});
-
-window.addEventListener("appinstalled", () => {
   console.log("O usuário instalou o MyFinance!");
   if (typeof gtag === "function") {
     gtag("event", "pwa_install", { app_name: "MyFinance", origem: "Instalação pelo Navegador" });
