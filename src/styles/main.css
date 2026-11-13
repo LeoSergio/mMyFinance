@@ -484,7 +484,7 @@ main {
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  grid-template-columns: 2fr 1.1fr 1.1fr 1fr 1.2fr auto;
   gap: 1rem;
   align-items: end;
 }
@@ -641,6 +641,29 @@ tbody td {
 
 .value-income  { color: var(--color-income);  font-weight: 600; }
 .value-expense { color: var(--color-expense); font-weight: 600; }
+
+.table-desc-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.table-desc-text {
+  font-weight: 500;
+}
+
+.table-cat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  background: var(--bg-page);
+  border: 1px solid var(--border-color);
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  width: fit-content;
+}
 
 /* Badges */
 .badge {
@@ -1856,23 +1879,51 @@ tbody td {
 
 .rule-title-group .dash-title { margin-bottom: 0; }
 
-.rule-learn-link {
+.rule-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.rule-config-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   font-size: 0.8rem;
   color: var(--color-accent);
+  background: transparent;
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.rule-config-btn:hover {
+  background: var(--color-accent);
+  color: #fff;
+}
+
+.rule-learn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
   text-decoration: none;
   padding: 0.35rem 0.75rem;
-  border: 1px solid rgba(99,102,241,0.3);
+  border: 1px solid var(--border-color);
   border-radius: 99px;
   transition: background 0.2s, color 0.2s;
   white-space: nowrap;
 }
 .rule-learn-link:hover {
-  background: var(--color-accent);
-  color: #fff;
-  border-color: var(--color-accent);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  border-color: var(--text-secondary);
 }
 
 /* ── Body: gauge + pilares ── */
@@ -2210,6 +2261,104 @@ tbody td {
   color: var(--color-income);
 }
 .rule-tip--success i { color: var(--color-income); }
+
+/* Modal de Configuração da Regra */
+.rule-modal-box {
+  max-width: 480px !important;
+  width: 90% !important;
+  text-align: left;
+}
+.rule-presets-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+.rule-presets-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+.rule-preset-btn {
+  background: var(--bg-page);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.6rem;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s;
+}
+.rule-preset-btn:hover {
+  border-color: var(--color-accent);
+  background: rgba(99,102,241,0.05);
+}
+.rule-preset-btn strong {
+  color: var(--color-accent);
+}
+.rule-ratios-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.rule-ratio-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.rule-ratio-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.rule-ratio-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.rule-ratio-input {
+  width: 70px;
+  padding: 0.45rem 0.6rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}
+.rule-ratio-input:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+.rule-total-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background: var(--bg-page);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.rule-total-val--valid {
+  color: var(--color-income);
+}
+.rule-total-val--invalid {
+  color: var(--color-expense);
+}
 
 
 /* ==========================================

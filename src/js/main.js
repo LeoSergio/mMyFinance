@@ -2,7 +2,7 @@
 // MAIN.JS — Ponto de entrada da aplicação
 // ==========================================
 import state                              from "./core/state.js";
-import { saveItems }                      from "./core/storage.js";
+import { getLocalDateString }             from "./core/date.js";
 import { initTheme }                      from "./modules/theme.js";
 import { initDrawer }                     from "./modules/drawer.js";
 import { initGreeting }                   from "./modules/greeting.js";
@@ -11,34 +11,91 @@ import { buildDashboard, categorizeItem } from "./modules/dashboard.js";
 import { buildChart }                     from "./modules/chart.js";
 import { showToast, showConfirm }         from "./modules/toast.js";
 import { exportToCSV }                    from "./modules/export.js";
-import { initReminders, scheduleReminder, removeReminderByIndex } from "./modules/reminder.js";
+import { initReminders, scheduleReminder, removeReminder } from "./modules/reminder.js";
 import { buildRule5030 }                     from "./modules/rule5030.js";
 import { buildGoals }                        from "./modules/goals.js";
+import { getAllCategories, addCustomCategory, suggestCategory } from "./modules/category.js";
 
 // ── Elementos do formulário ───────────────────────────────────────
-const descInput   = document.querySelector("#desc");
-const amountInput = document.querySelector("#amount");
-const dateInput   = document.querySelector("#date");
-const typeSelect  = document.querySelector("#type");
-const btnNew      = document.querySelector("#btnNew");
+const descInput     = document.querySelector("#desc");
+const amountInput   = document.querySelector("#amount");
+const dateInput     = document.querySelector("#date");
+const typeSelect    = document.querySelector("#type");
+const categorySelect = document.querySelector("#category");
+const btnNew        = document.querySelector("#btnNew");
 
-// Data padrão = hoje
-dateInput.value = new Date().toISOString().slice(0, 10);
+// Data padrão = hoje (fuso horário local)
+dateInput.value = getLocalDateString();
+
+// ── Gestão de Categorias no Formulário ────────────────────────────
+let userManuallyPickedCategory = false;
+
+function renderCategoryOptions(selectedKey = null) {
+  if (!categorySelect) return;
+  const cats = getAllCategories(state.items);
+  const currentVal = selectedKey || categorySelect.value;
+
+  categorySelect.innerHTML = `
+    ${cats.map((c) => `<option value="${c.key}">${c.label}</option>`).join("")}
+    <option value="__new__">+ Nova Categoria...</option>
+  `;
+
+  if (currentVal && cats.some((c) => c.key === currentVal)) {
+    categorySelect.value = currentVal;
+  } else if (cats.length > 0) {
+    categorySelect.value = cats[0].key;
+  }
+}
+
+categorySelect?.addEventListener("change", () => {
+  if (categorySelect.value === "__new__") {
+    const newName = window.prompt("Nome da nova categoria:");
+    if (newName && newName.trim()) {
+      const cleanName = newName.trim();
+      addCustomCategory(cleanName);
+      renderCategoryOptions(cleanName);
+      categorySelect.value = cleanName;
+      userManuallyPickedCategory = true;
+      showToast(`Categoria "${cleanName}" adicionada!`, "success");
+    } else {
+      renderCategoryOptions();
+    }
+    return;
+  }
+  userManuallyPickedCategory = true;
+});
+
+// Auto-sugestão ao digitar a descrição
+descInput.addEventListener("input", () => {
+  if (!userManuallyPickedCategory && categorySelect) {
+    const suggested = suggestCategory(descInput.value, typeSelect.value);
+    categorySelect.value = suggested;
+  }
+});
+
+// Ajuste da sugestão ao mudar o tipo
+typeSelect.addEventListener("change", () => {
+  if (!userManuallyPickedCategory && categorySelect) {
+    const suggested = suggestCategory(descInput.value, typeSelect.value);
+    categorySelect.value = suggested;
+  }
+});
 
 // ── Estado do modo edição ─────────────────────────────────────────
-let editingIndex = null;
+let editingId = null;
 
 // ── Renderização reativa ──────────────────────────────────────────
 function render(items) {
   clearTable();
-  items.forEach((item, index) =>
-    renderItem(item, index, handleDelete, handleEdit)
+  items.forEach((item) =>
+    renderItem(item, handleDelete, handleEdit)
   );
   updateTotals(items);
   buildDashboard(items);
   buildChart(items);
   buildRule5030(items);
   buildGoals();
+  renderCategoryOptions(categorySelect?.value);
 }
 
 state.subscribe(render);
@@ -50,31 +107,32 @@ btnNew.addEventListener("click", () => {
     return;
   }
 
+  const selectedCategory = categorySelect?.value || suggestCategory(descInput.value, typeSelect.value);
+
   const item = {
     date:     dateInput.value,
     desc:     descInput.value,
     amount:   Math.abs(amountInput.value).toFixed(2),
     type:     typeSelect.value,
-    category: categorizeItem(descInput.value),
+    category: selectedCategory,
   };
 
-  const today    = new Date().toISOString().slice(0, 10);
+  const today    = getLocalDateString();
   const isFuture = item.date > today;
 
-  if (editingIndex !== null) {
+  if (editingId !== null) {
     // Remove lembrete antigo antes de atualizar
-    removeReminderByIndex(editingIndex);
-    state.update(editingIndex, item);
+    removeReminder(editingId);
+    state.update(editingId, item);
     // Agenda novo lembrete se data futura
-    if (isFuture) scheduleReminder(item, editingIndex);
+    if (isFuture) scheduleReminder({ ...item, id: editingId });
     showToast("Lançamento atualizado!", "success");
     cancelEdit();
   } else {
-    state.add(item);
-    const newIndex = state.items.length - 1;
+    const createdItem = state.add(item);
     // Agenda lembrete e informa o usuário
     if (isFuture) {
-      scheduleReminder(item, newIndex);
+      scheduleReminder(createdItem);
       showToast("Lançamento agendado! Você receberá um lembrete na data.", "info", null, 5000);
     } else {
       showToast("Lançamento adicionado!", "success");
@@ -83,18 +141,26 @@ btnNew.addEventListener("click", () => {
 
   descInput.value   = "";
   amountInput.value = "";
-  dateInput.value   = new Date().toISOString().slice(0, 10);
+  dateInput.value   = getLocalDateString();
+  userManuallyPickedCategory = false;
+  renderCategoryOptions();
 });
 
 // ── Ação: editar ──────────────────────────────────────────────────
-function handleEdit(index) {
-  const item = state.items[index];
+function handleEdit(id) {
+  const item = typeof id === "object" ? id : state.getById(id);
+  if (!item) return;
+
   descInput.value   = item.desc;
   amountInput.value = item.amount;
   dateInput.value   = item.date;
   typeSelect.value  = item.type;
 
-  editingIndex = index;
+  renderCategoryOptions(item.category);
+  if (categorySelect) categorySelect.value = item.category;
+  userManuallyPickedCategory = true;
+
+  editingId = item.id;
   btnNew.innerHTML  = '<i class="bx bx-save"></i> Salvar';
   btnNew.classList.add("btn--editing");
 
@@ -112,23 +178,27 @@ function handleEdit(index) {
 }
 
 function cancelEdit() {
-  editingIndex      = null;
+  editingId         = null;
   btnNew.innerHTML  = '<i class="bx bx-plus-circle"></i> Incluir';
   btnNew.classList.remove("btn--editing");
   descInput.value   = "";
   amountInput.value = "";
-  dateInput.value   = new Date().toISOString().slice(0, 10);
+  dateInput.value   = getLocalDateString();
+  userManuallyPickedCategory = false;
+  renderCategoryOptions();
   document.getElementById("btnCancelEdit")?.remove();
 }
 
 // ── Ação: excluir com confirmação ─────────────────────────────────
-function handleDelete(index) {
-  const item = state.items[index];
+function handleDelete(id) {
+  const item = typeof id === "object" ? id : state.getById(id);
+  if (!item) return;
+
   showConfirm(
     `Excluir "<strong>${item.desc}</strong>"?`,
     () => {
-      removeReminderByIndex(index);
-      state.remove(index);
+      removeReminder(item.id);
+      state.remove(item.id);
       showToast("Lançamento excluído.", "info");
     }
   );
@@ -195,14 +265,10 @@ window.btnClear = () => {
         <small style="color:var(--text-muted);font-size:0.8rem">Essa ação não pode ser desfeita.</small>`,
         () => {
           if (tipo === "todos") {
-            state._items = [];
-            saveItems([]);
+            state.clearAll();
           } else {
-            const filtrados = state.items.filter(i => i.type !== tipo);
-            state._items = filtrados;
-            saveItems(filtrados);
+            state.removeByType(tipo);
           }
-          state._notify();
           showToast(`${label} removidas com sucesso.`, "success");
         }
       );
@@ -220,7 +286,7 @@ dateInput.addEventListener("change", () => {
   updateSelectedDate(dateInput.value);
 
   // Avisa o usuário se selecionou data futura
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getLocalDateString();
   if (dateInput.value > today) {
     showToast("Data futura selecionada — um lembrete será enviado no dia do lançamento.", "info", null, 4000);
   }
@@ -315,6 +381,7 @@ initTheme();
 initDrawer();
 initGreeting();
 state.load();
+renderCategoryOptions();
 initReminders();
 
 // Recarrega metas ao criar/editar/excluir
