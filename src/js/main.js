@@ -6,7 +6,7 @@ import { getLocalDateString }             from "./core/date.js";
 import { initTheme }                      from "./modules/theme.js";
 import { initDrawer }                     from "./modules/drawer.js";
 import { initGreeting }                   from "./modules/greeting.js";
-import { renderItem, clearTable, updateTotals, updateSelectedDate } from "./modules/ui.js";
+import { renderTransactionsTable, initTableFilters, updateTotals, updateSelectedDate } from "./modules/ui.js";
 import { buildDashboard, categorizeItem } from "./modules/dashboard.js";
 import { buildChart }                     from "./modules/chart.js";
 import { showToast, showConfirm }         from "./modules/toast.js";
@@ -86,10 +86,7 @@ let editingId = null;
 
 // ── Renderização reativa ──────────────────────────────────────────
 function render(items) {
-  clearTable();
-  items.forEach((item) =>
-    renderItem(item, handleDelete, handleEdit)
-  );
+  renderTransactionsTable(items, handleDelete, handleEdit);
   updateTotals(items);
   buildDashboard(items);
   buildChart(items);
@@ -382,6 +379,7 @@ initDrawer();
 initGreeting();
 state.load();
 renderCategoryOptions();
+initTableFilters(() => renderTransactionsTable(state.items, handleDelete, handleEdit));
 initReminders();
 
 // Recarrega metas ao criar/editar/excluir
