@@ -26,10 +26,17 @@
 
   .transactions-filters {
     grid-template-columns: 1fr 1fr;
+    width: 100%;
   }
 
   .filter-search {
     grid-column: 1 / -1;
+  }
+
+  .btn-clear-filters {
+    grid-column: 1 / -1;
+    width: 100%;
+    justify-content: center;
   }
 
   #btnNew {
@@ -107,19 +114,50 @@
     box-shadow: var(--shadow-card) !important;
     width: 100% !important;
     max-width: 100% !important;
+    margin: 0 auto !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
+    align-items: stretch !important;
   }
 
   .transactions-filters {
     grid-template-columns: 1fr !important;
     gap: 0.5rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .transactions-filters .filter-input-wrap {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .transactions-filters .filter-input-wrap input,
+  .transactions-filters .filter-input-wrap select {
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .btn-clear-filters {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+  }
+
+  .table-toggle-wrap {
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    box-sizing: border-box !important;
   }
 
   .btn-toggle-expand {
     width: 100% !important;
     padding: 0.75rem 1rem !important;
     font-size: 0.9rem !important;
+    justify-content: center !important;
   }
 
   /* --- Header & Saudação --- */
@@ -140,15 +178,18 @@
     gap: 0.35rem;
   }
 
-  section {
-    padding: 1rem 0.85rem 0.25rem;
+  .hero-section,
+  section.hero-section {
+    padding: 1rem 0.85rem 0.25rem !important;
   }
 
-  section h1 {
-    font-size: 1.35rem;
+  .hero-section h1,
+  section.hero-section h1 {
+    font-size: 1.35rem !important;
   }
 
   /* --- Cabeçalhos das Seções --- */
+  .transactions-header,
   .budget-header,
   .rule-header,
   .insights-header,
@@ -161,8 +202,11 @@
     gap: 0.6rem !important;
     margin-bottom: 1rem !important;
     flex-wrap: wrap !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
+  .transactions-title-group,
   .budget-title-group,
   .rule-title-group,
   .insights-title-group,
@@ -183,6 +227,7 @@
     line-height: 1.3 !important;
   }
 
+  .transactions-count-badge,
   .budget-month-badge,
   .insights-count-badge,
   .goals-summary-badge,
@@ -291,6 +336,8 @@
     border: none !important;
     background: transparent !important;
     padding: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   table {
@@ -310,6 +357,8 @@
   table tbody tr {
     display: block !important;
     margin-bottom: 0.75rem !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
     border-radius: var(--radius-sm) !important;
     border: 1.5px solid var(--border-color) !important;
     padding: 0.8rem 0.95rem !important;
@@ -1055,8 +1104,9 @@
     font-size: 0.76rem;
   }
 
-  section h1 {
-    font-size: 1.2rem;
+  .hero-section h1,
+  section.hero-section h1 {
+    font-size: 1.2rem !important;
   }
 
   .card h2 {
